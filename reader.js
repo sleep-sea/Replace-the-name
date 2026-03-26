@@ -1,5 +1,6 @@
 // reader.js - 读者面板交互
 
+const authorPanel = document.getElementById('authorPanel');
 const readerPanel = document.getElementById('readerPanel');
 const readerNameInput = document.getElementById('readerNameInput');
 const readerUnlockBtn = document.getElementById('readerUnlockBtn');
@@ -59,25 +60,32 @@ function unlockArticle() {
 async function initReaderPanel() {
     try {
         const hasArticle = await loadArticleFromUrl();
-        if (!hasArticle) {
-            // 没有 Gist 参数，可能直接访问了首页，跳转到作者模式或显示提示
-            readerPreview.innerHTML = '暂无文章内容，请作者先生成分享链接后访问。';
-            readerUnlockBtn.disabled = true;
-            readerNameInput.disabled = true;
-            return;
+        if (hasArticle) {
+            // 切换到读者模式：隐藏作者面板，显示读者面板
+            authorPanel.classList.add('hidden');
+            readerPanel.classList.remove('hidden');
+            
+            readerUnlockBtn.addEventListener('click', unlockArticle);
+            readerNameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') unlockArticle();
+            });
+            readerPreview.innerHTML = '👆 请输入你的名字，然后点击「解锁文章」。';
+        } else {
+            // 没有 gist 参数，保持作者面板（默认状态）
+            // 但为了防止读者面板意外显示，确保它被隐藏
+            authorPanel.classList.remove('hidden');
+            readerPanel.classList.add('hidden');
         }
-        // 有文章内容，启用解锁按钮
-        readerUnlockBtn.addEventListener('click', unlockArticle);
-        readerNameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') unlockArticle();
-        });
-        readerPreview.innerHTML = '👆 请输入你的名字，然后点击「解锁文章」。';
     } catch (err) {
         console.error(err);
+        // 加载失败时，依然切换到读者模式，但显示错误信息
+        authorPanel.classList.add('hidden');
+        readerPanel.classList.remove('hidden');
         readerPreview.innerHTML = `❌ 加载文章失败: ${err.message}`;
         readerUnlockBtn.disabled = true;
         readerNameInput.disabled = true;
     }
 }
 
-if (readerPanel) initReaderPanel();
+// 执行初始化
+initReaderPanel();
