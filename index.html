@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>文章定制分享 · 名字替换阅读器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #eef2fa 0%, #dee6f2 100%);
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.96);
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            overflow: hidden;
+            margin-bottom: 1.8rem;
+        }
+
+        .card-header {
+            background: #ffffffcc;
+            padding: 1.5rem 2rem 0.8rem 2rem;
+            border-bottom: 1px solid #eef2f9;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1f3e5c, #2b5a7a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-content {
+            padding: 1.8rem 2rem 2rem 2rem;
+        }
+
+        .article-editor {
+            width: 100%;
+            min-height: 280px;
+            padding: 1.2rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border: 2px solid #e2e8f0;
+            border-radius: 1.2rem;
+            resize: vertical;
+            outline: none;
+            background: #fefefe;
+        }
+        .article-editor:focus {
+            border-color: #2d8fbb;
+            box-shadow: 0 0 0 3px rgba(45, 143, 187, 0.1);
+        }
+
+        .btn {
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: linear-gradient(100deg, #1f6392, #2b7aa3);
+            color: white;
+            box-shadow: 0 4px 10px rgba(31, 99, 146, 0.2);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(31, 99, 146, 0.25);
+        }
+        .btn-secondary {
+            background: #ffffff;
+            border: 1px solid #cbdbe0;
+            color: #4a627a;
+        }
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+
+        .link-box {
+            background: #f1f5f9;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            margin: 1rem 0;
+            word-break: break-all;
+            font-size: 0.85rem;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .link-box input {
+            flex: 1;
+            background: white;
+            border: 1px solid #cbd5e1;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            outline: none;
+        }
+        .copy-btn {
+            background: #2c7da0;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .reader-name-area {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .reader-name-input {
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+            padding: 0.8rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 3rem;
+            font-size: 1rem;
+            text-align: center;
+        }
+        .article-preview {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 1.6rem;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 250px;
+            border: 1px solid #eef2f8;
+            font-size: 1rem;
+        }
+        .hidden {
+            display: none;
+        }
+        .deploy-tip {
+            margin-top: 1rem;
+            font-size: 0.7rem;
+            color: #6c819e;
+            background: #eef3ff;
+            padding: 0.5rem;
+            border-radius: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 作者模式面板（默认显示） -->
+    <div id="authorPanel" class="card">
+        <div class="card-header">
+            <h2>输入你的文章</h2>
+            <p style="font-size: 0.75rem; color:#6c819e; margin-top: 0.2rem;">使用 <code style="background:#eef2f8; padding:0.2rem 0.4rem; border-radius: 8px;">{{name}}</code> 作为占位符，读者输入名字后会替换为他们的名字。</p>
+        </div>
+        <div class="card-content">
+            <textarea id="articleContent" class="article-editor" placeholder="写一篇文章吧，用 {{name}} 代替读者名字。例如：\n\n亲爱的 {{name}}，欢迎来到我的世界……"></textarea>
+            <div style="display: flex; justify-content: flex-end; margin-top: 1rem; gap: 0.8rem; flex-wrap: wrap;">
+                <button id="generateLinkBtn" class="btn btn-primary">🔗 生成长链接</button>
+                <button id="shortenLinkBtn" class="btn btn-secondary">⚡ 生成短链接</button>
+            </div>
+            <div id="shareLinkContainer" class="hidden">
+                <div class="link-box">
+                    <input type="text" id="shareLinkInput" readonly>
+                    <button id="copyLinkBtn" class="copy-btn">复制链接</button>
+                </div>
+            </div>
+            <div class="deploy-tip">
+                💡 提示：将本页面部署到 GitHub Pages / Netlify 等静态托管后，分享链接即可全球访问。
+            </div>
+        </div>
+    </div>
+
+    <!-- 读者模式面板（初始隐藏） -->
+    <div id="readerPanel" class="card hidden">
+        <div class="card-header">
+            <h2>📖 专属阅读 · 输入你的名字</h2>
+            <p style="font-size: 0.75rem; color:#6c819e;">文章中的 {{name}} 将替换为你输入的名字</p>
+        </div>
+        <div class="card-content">
+            <div class="reader-name-area">
+                <input type="text" id="readerNameInput" class="reader-name-input" placeholder="你的名字" autocomplete="off">
+                <button id="readerUnlockBtn" class="btn btn-primary" style="margin-top: 1rem;">✨ 解锁文章 ✨</button>
+            </div>
+            <div id="readerArticlePreview" class="article-preview">
+                等待输入名字...
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- 配置 ----------
+    const PLACEHOLDER = "{{name}}";
+
+    // DOM 元素
+    const authorPanel = document.getElementById('authorPanel');
+    const readerPanel = document.getElementById('readerPanel');
+    const articleContentTextarea = document.getElementById('articleContent');
+    const generateLinkBtn = document.getElementById('generateLinkBtn');
+    const shortenLinkBtn = document.getElementById('shortenLinkBtn');
+    const shareLinkContainer = document.getElementById('shareLinkContainer');
+    const shareLinkInput = document.getElementById('shareLinkInput');
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+
+    const readerNameInput = document.getElementById('readerNameInput');
+    const readerUnlockBtn = document.getElementById('readerUnlockBtn');
+    const readerArticlePreview = document.getElementById('readerArticlePreview');
+
+    // 辅助函数：显示提示
+    function showToast(msg, type = 'info') {
+        let toast = document.getElementById('dynamicToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'dynamicToast';
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.padding = '10px 20px';
+            toast.style.borderRadius = '40px';
+            toast.style.fontSize = '0.85rem';
+            toast.style.fontWeight = '500';
+            toast.style.zIndex = '1000';
+            toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+            toast.style.backdropFilter = 'blur(8px)';
+            toast.style.pointerEvents = 'none';
+            document.body.appendChild(toast);
+        }
+        if (type === 'success') toast.style.background = '#2b7e3ae6';
+        else if (type === 'warning') toast.style.background = '#e68a2ee6';
+        else toast.style.background = '#2c6280e6';
+        toast.textContent = msg;
+        toast.style.opacity = '1';
+        if (window.toastTimeout) clearTimeout(window.toastTimeout);
+        window.toastTimeout = setTimeout(() => {
+            toast.style.opacity = '0';
+        }, 2500);
+    }
+
+    // 将文章内容编码为URL安全的字符串
+    function encodeArticle(article) {
+        return encodeURIComponent(article);
+    }
+
+    // 解码URL参数中的文章
+    function decodeArticle(encoded) {
+        try {
+            return decodeURIComponent(encoded);
+        } catch(e) {
+            return "";
+        }
+    }
+
+    // 生成完整长链接（不含短链接）
+    function getLongShareUrl() {
+        let article = articleContentTextarea.value;
+        if (!article.trim()) {
+            showToast("请先填写文章内容", "warning");
+            return null;
+        }
+        if (article.length > 4000) {
+            if (!confirm("文章内容较长，生成的链接可能无法在某些浏览器中正常工作。确定继续吗？")) {
+                return null;
+            }
+        }
+        const encoded = encodeArticle(article);
+        const currentUrl = window.location.href.split('?')[0];
+        return currentUrl + "?article=" + encoded;
+    }
+
+    // 生成长链接并显示（同时自动复制）
+    function generateLongLink() {
+        const longUrl = getLongShareUrl();
+        if (!longUrl) return;
+        shareLinkInput.value = longUrl;
+        shareLinkContainer.classList.remove("hidden");
+        navigator.clipboard.writeText(longUrl).then(() => {
+            showToast("长链接已复制到剪贴板", "success");
+        }).catch(() => {
+            showToast("长链接已生成，请手动复制", "info");
+        });
+    }
+
+    // 生成短链接（调用 TinyURL API）
+    async function generateShortLink() {
+        const longUrl = getLongShareUrl();
+        if (!longUrl) return;
+
+        // 显示加载状态
+        shortenLinkBtn.disabled = true;
+        shortenLinkBtn.textContent = "⏳ 缩短中...";
+        
+        try {
+            // 使用 TinyURL 公开 API（无需密钥）
+            const apiUrl = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`;
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error("请求失败");
+            const shortUrl = await response.text(); // 返回纯文本短链接
+            if (shortUrl && shortUrl.startsWith("http")) {
+                shareLinkInput.value = shortUrl;
+                shareLinkContainer.classList.remove("hidden");
+                navigator.clipboard.writeText(shortUrl).then(() => {
+                    showToast("短链接已复制，可直接分享", "success");
+                }).catch(() => {
+                    showToast("短链接已生成，请手动复制", "info");
+                });
+            } else {
+                throw new Error("返回无效链接");
+            }
+        } catch (err) {
+            console.error(err);
+            showToast("短链接生成失败，请稍后重试或使用长链接", "warning");
+            // 降级显示长链接
+            shareLinkInput.value = longUrl;
+            shareLinkContainer.classList.remove("hidden");
+        } finally {
+            shortenLinkBtn.disabled = false;
+            shortenLinkBtn.textContent = "⚡ 生成短链接";
+        }
+    }
+
+    // 复制链接
+    function copyLink() {
+        if (shareLinkInput.value) {
+            navigator.clipboard.writeText(shareLinkInput.value).then(() => {
+                showToast("链接已复制", "success");
+            }).catch(() => {
+                shareLinkInput.select();
+                document.execCommand('copy');
+                showToast("链接已复制", "success");
+            });
+        }
+    }
+
+    // 读者模式：替换占位符并显示文章
+    function renderReaderArticle(name) {
+        const storedArticle = sessionStorage.getItem('readerArticle');
+        if (!storedArticle) {
+            readerArticlePreview.innerHTML = "文章内容加载失败，请刷新页面重试。";
+            return;
+        }
+        if (!name || name.trim() === "") {
+            readerArticlePreview.innerHTML = "请输入你的名字，然后点击「解锁文章」";
+            return;
+        }
+        const regex = new RegExp(escapeRegExp(PLACEHOLDER), 'g');
+        const replaced = storedArticle.replace(regex, name);
+        readerArticlePreview.innerHTML = replaced.replace(/\n/g, '<br>');
+    }
+
+    function escapeRegExp(string) {
+        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+
+    function unlockForReader() {
+        let userName = readerNameInput.value.trim();
+        if (userName === "") {
+            showToast("请输入你的名字", "warning");
+            readerNameInput.focus();
+            return;
+        }
+        renderReaderArticle(userName);
+        showToast(`欢迎 ${userName}，请开始阅读吧`, "success");
+    }
+
+    // 初始化：检测URL参数
+    function init() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const encodedArticle = urlParams.get('article');
+        
+        if (encodedArticle !== null && encodedArticle !== "") {
+            const article = decodeArticle(encodedArticle);
+            if (article && article.trim() !== "") {
+                sessionStorage.setItem('readerArticle', article);
+                authorPanel.classList.add('hidden');
+                readerPanel.classList.remove('hidden');
+                readerArticlePreview.innerHTML = "👆 请输入你的名字，然后点击「解锁文章」。";
+                readerUnlockBtn.addEventListener('click', unlockForReader);
+                readerNameInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        unlockForReader();
+                    }
+                });
+            } else {
+                authorPanel.classList.add('hidden');
+                readerPanel.classList.remove('hidden');
+                sessionStorage.setItem('readerArticle', "");
+                readerArticlePreview.innerHTML = "❌ 无效的文章链接，请检查分享链接是否正确。";
+                readerUnlockBtn.disabled = true;
+                readerNameInput.disabled = true;
+                showToast("文章内容为空或已损坏", "warning");
+            }
+        } else {
+            authorPanel.classList.remove('hidden');
+            readerPanel.classList.add('hidden');
+            const savedDraft = localStorage.getItem('authorDraft');
+            if (savedDraft) {
+                articleContentTextarea.value = savedDraft;
+            } else {
+                articleContentTextarea.value = `亲爱的 {{name}}：
+
+你好！这是一封专属于你的信。
+
+在这个世界里，{{name}} 是独一无二的存在。我希望当你读到这篇文章时，所有的 {{name}} 都会变成你的名字，让它成为只属于你的故事。
+
+愿 {{name}} 拥有美好的一天！
+
+—— 作者敬上`;
+            }
+            generateLinkBtn.addEventListener('click', generateLongLink);
+            shortenLinkBtn.addEventListener('click', generateShortLink);
+            copyLinkBtn.addEventListener('click', copyLink);
+            articleContentTextarea.addEventListener('input', () => {
+                localStorage.setItem('authorDraft', articleContentTextarea.value);
+            });
+        }
+    }
+
+    init();
+</script>
+</body>
+</html>
