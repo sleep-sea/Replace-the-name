@@ -225,20 +225,21 @@
         </div>
     </div>
 
-    <!-- 读者模式面板 -->
     <div id="readerPanel" class="card hidden">
-        <div class="card-header">
-            <h2>📖 专属阅读 · 输入你的名字</h2>
-            <p style="font-size: 0.75rem; color:#6c819e;">文章中的 {{name}} 将替换为你输入的名字</p>
+    <div class="card-header">
+        <h2>📖 专属阅读 · 输入你的信息</h2>
+        <p style="font-size: 0.75rem; color:#6c819e;">
+            文章中的 <code>{{name}}</code> 和 <code>{{nickname}}</code> 将分别替换为你的名字和昵称。
+        </p>
+    </div>
+    <div class="card-content">
+        <div class="reader-name-area">
+            <input type="text" id="readerNameInput" class="reader-name-input" placeholder="你的名字" autocomplete="off">
+            <input type="text" id="readerNicknameInput" class="reader-name-input" placeholder="你的昵称" autocomplete="off" style="margin-top: 0.8rem;">
+            <button id="readerUnlockBtn" class="btn btn-primary" style="margin-top: 1rem;">✨ 解锁文章 ✨</button>
         </div>
-        <div class="card-content">
-            <div class="reader-name-area">
-                <input type="text" id="readerNameInput" class="reader-name-input" placeholder="你的名字" autocomplete="off">
-                <button id="readerUnlockBtn" class="btn btn-primary" style="margin-top: 1rem;">✨ 解锁文章 ✨</button>
-            </div>
-            <div id="readerArticlePreview" class="article-preview">
-                等待输入名字...
-            </div>
+        <div id="readerArticlePreview" class="article-preview">
+            等待输入名字和昵称...
         </div>
     </div>
 </div>
