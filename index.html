@@ -172,6 +172,23 @@
             border: 1px solid #cbd5e1;
             font-size: 0.9rem;
         }
+        .preview-area {
+            margin-top: 1rem;
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 1rem;
+        }
+        .preview-area strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        .preview-content {
+            white-space: pre-wrap;
+            word-break: break-word;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -190,23 +207,19 @@
                 <button id="verifyGistBtn" class="btn btn-secondary">🔍 验证并加载</button>
             </div>
 
-            <div id="articlePreviewArea" class="hidden" style="margin-top: 1rem; background: #f8fafc; border-radius: 1rem; padding: 1rem;">
+            <div id="previewArea" class="preview-area hidden">
                 <strong>📝 文章预览：</strong>
-                <div id="articlePreviewContent" style="margin-top: 0.5rem; white-space: pre-wrap; word-break: break-word; max-height: 200px; overflow-y: auto;"></div>
-            </div>
-
-            <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                <button id="generateLinkBtn" class="btn btn-primary">🔗 生成分享链接</button>
+                <div id="previewContent" class="preview-content"></div>
             </div>
 
             <div id="shareLinkContainer" class="hidden">
                 <div class="link-box">
                     <input type="text" id="shareLinkInput" readonly>
-                    <button id="copyLinkBtn" class="copy-btn">复制链接</button>
+                    <button id="copyLinkBtn" class="copy-btn">📋 复制链接</button>
                 </div>
             </div>
             <div class="deploy-tip">
-                💡 提示：将 Gist ID 填入后，点击“生成分享链接”即可获得永久链接。读者打开链接后会看到专属名字替换界面。
+                💡 提示：验证成功后，链接会自动生成并显示在上方，点击复制即可分享。
             </div>
         </div>
     </div>
